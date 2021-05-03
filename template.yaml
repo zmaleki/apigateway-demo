@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+    Function:
+        Runtime: nodejs12.x
+        Timeout: 120
+        MemorySize: 256
+        Handler: index.handler
+        Tracing: Active
+
+Resources:
+    TimeLoggerFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+          CodeUri: ./src/TimeLogger
+          Events:
+            ApiEvent:
+                Type: HttpApi
+                Properties:
+                    ApiId: !Ref TimeApi
+                    Method: GET
+                    Path: /time
+
+    TimeApi:
+        Type: AWS::Serverless::HttpApi
+        Properties:
+          Description: Time Api
+          FailOnWarnings: true 
+
+    TimeLoggerFunctionPermission:
+        Type: AWS::Lambda::Permission
+        DependsOn:
+            - TimeApi
+        Properties:
+            Action: lambda:InvokeFunction
+            FunctionName: !Ref TimeLoggerFunction
+            Principal: apigateway.amazonaws.com
