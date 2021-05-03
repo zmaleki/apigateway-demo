@@ -3,7 +3,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     entry: {
-        "TimeLogger": "./src/timeLogger/index.ts",
+        "TimeFunction": "./src/timefunction/index.ts",
         
     },
     output: {
@@ -36,7 +36,7 @@ module.exports = {
     },
     plugins: [
         new CopyPlugin({
-            patterns: [{ from: "*template.yaml" }],
+            patterns: [{ from: "*.yaml" }],
         }),
     ],
 };

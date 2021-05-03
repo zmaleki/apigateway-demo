@@ -8,25 +8,37 @@ Globals:
         MemorySize: 256
         Handler: index.handler
         Tracing: Active
+    Api:
+      EndpointConfiguration: REGIONAL
+      TracingEnabled: true
 
 Resources:
     TimeLoggerFunction:
         Type: AWS::Serverless::Function
         Properties:
-          CodeUri: ./src/TimeLogger
+          CodeUri: ./src/TimeFunction
           Events:
             ApiEvent:
-                Type: HttpApi
-                Properties:
-                    ApiId: !Ref TimeApi
-                    Method: GET
-                    Path: /time
+              Type: Api
+              Properties:
+                Path: /
+                Method: get
+                RestApiId:
+                  Ref: TimeApi
+          Timeout: 60
+            # ApiEvent:
+            #     Type: HttpApi
+            #     Properties:
+            #         ApiId: !Ref TimeApi
+            #         Method: GET
+            #         Path: /time
 
     TimeApi:
-        Type: AWS::Serverless::HttpApi
-        Properties:
-          Description: Time Api
-          FailOnWarnings: true 
+      Type: AWS::Serverless::Api
+      Properties:
+        Name: TimeApi
+        StageName: prod
+        Cors: "'*'"
 
     TimeLoggerFunctionPermission:
         Type: AWS::Lambda::Permission
